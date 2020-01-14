@@ -17,6 +17,8 @@
 \maketitle
 
 \section{Introduction}
+
+\clearpage
 \section{Model description}
 
 \subsection{Plant Water Supply Equations}
@@ -43,6 +45,8 @@ q = -k_\text{max}\cdot f_k\left(\Psi_L,\Psi_s\right) \cdot \left(\psi_L-\psi_s\r
 f_k = \dfrac{\dfrac{1}{2} \left(\psi_L+\psi_s\right) - p_2}{p_1 - p_2} \in \left[0,1\right]
 \end{equation}
 
+
+\clearpage
 \subsection{Plant Water Demand Equations}
 \begin{equation}
 T = T_\text{max}\cdot f_T
@@ -52,13 +56,40 @@ T = T_\text{max}\cdot f_T
 f_T = \dfrac{\psi_L - p_4}{p_3 - p_4} \in \left[0,1\right]
 \end{equation}
 
+\clearpage
 \subsection{Solution}
+
+We solve for leaf water potential and transpiration by requiring that: 
+\begin{equation}
+T = q
+\end{equation}
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=25pc]{../figs/spac_solution}
 \caption{The solution for $\Psi_L$ occurs where the two curves intersect.}
 \label{fig:soln}
 \end{figure}
+
+Because transpiration decreases with decreasing $\Psi_L$ and sap flux increases, we can usually find a satisfactory solution. There are two potential issues:
+
+\begin{enumerate}
+\item The curves intersect twice.
+	\begin{itemize}
+	\item This is possible due to the parabolic shape of the sap flux curve.
+	\item We want to choose the less negative value of $\Psi_L$ as our solution.
+	\item The numerical implementation is designed to minimize the chances that we find the alternate solution.
+	\end{itemize}
+\item The curves never intersect.
+	\begin{itemize}
+	\item The sap flux curve can potentially peak and return to zero before there is enough transpiration attenuation to cause the lines to intersect.
+	\item This functionality does not comport well with our expectation of vegetation function, but could arise if we pick `bad' parameter values.
+	\item In this case, the model will crash, and provide a message that the parameter values may be unrealistic.
+	\end{itemize}
+\end{enumerate}
+
+
+
 
 \clearpage
 \bibliographystyle{abbrvnat}
