@@ -25,7 +25,7 @@ end
 
 xv = (1:30*24)/24;
 
-plot(xv,out(:,2),'.')
+plot(xv,out(:,3),'.')
 hold on
 end
 xlabel('Day')
