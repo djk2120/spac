@@ -48,6 +48,9 @@ f_k = \dfrac{\dfrac{1}{2} \left(\psi_L+\psi_s\right) - p_2}{p_1 - p_2} \in \left
 
 \clearpage
 \subsection{Plant Water Demand Equations}
+
+Here we implement hydraulic limitations to transpiration. As $\Psi_L$ becomes more negative, transpiration is reduced relative to some maximal value, using a simple linear attenuation function. This function uses $p_3$ and $p_4$ as parameters to define the onset of transpiration reduction $p_3$ and the point at which there is no transpiration $p_4$.
+
 \begin{equation}
 T = T_\text{max}\cdot f_T
 \end{equation}
@@ -55,6 +58,8 @@ T = T_\text{max}\cdot f_T
 \begin{equation}
 f_T = \dfrac{\psi_L - p_4}{p_3 - p_4} \in \left[0,1\right]
 \end{equation}
+
+Right now we have to produce some reasonable values for $T_\text{max}$ and force the model with that data, directly. Instead we could implement a stomatal conductance model, if we would rather force with micro-met.
 
 \clearpage
 \subsection{Solution}
@@ -71,24 +76,9 @@ T = q
 \label{fig:soln}
 \end{figure}
 
-Because transpiration decreases with decreasing $\Psi_L$ and sap flux increases, we can usually find a satisfactory solution. There are two potential issues:
+Because transpiration decreases with decreasing $\Psi_L$ and sap flux increases, we can usually find a satisfactory solution. 
 
-\begin{enumerate}
-\item The curves intersect twice.
-	\begin{itemize}
-	\item This is possible due to the parabolic shape of the sap flux curve.
-	\item We want to choose the less negative value of $\Psi_L$ as our solution.
-	\item The numerical implementation is designed to minimize the chances that we find the alternate solution.
-	\end{itemize}
-\item The curves never intersect.
-	\begin{itemize}
-	\item The sap flux curve can potentially peak and return to zero before there is enough transpiration attenuation to cause the lines to intersect.
-	\item This functionality does not comport well with our expectation of vegetation function, but could arise if we pick `bad' parameter values.
-	\item In this case, the model will crash, and provide a message that the parameter values may be unrealistic.
-	\end{itemize}
-\end{enumerate}
-
-
+\clearpage
 \subsection{Bucket}
 
 Right now the bucket is the simplest it can be. Remove the transpiration each timestep. The bucket is sized according to the effective rooting depth $Z_r$.
