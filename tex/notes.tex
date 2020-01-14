@@ -35,11 +35,13 @@ And we adopt a simple linear conductance attenuation parameterization:
 k(\psi) = \dfrac{\psi - p_2}{p_1 - p_2} \cdot k_\text{max}
 \end{equation}
 
-Solve the integral and define $f_k$:
+Such that equation (1) can be rewritten as:
 
 \begin{equation}
 q = -k_\text{max}\cdot f_k\left(\Psi_L,\Psi_s\right) \cdot \left(\psi_L-\psi_s\right)
 \end{equation}
+
+Where $f_k$ is the fraction of maximal soil-to-leaf hydraulic conductance, and is a function of both $\Psi_s$ and $\Psi_L$:
 
 \begin{equation}
 f_k = \dfrac{\dfrac{1}{2} \left(\psi_L+\psi_s\right) - p_2}{p_1 - p_2} \in \left[0,1\right]
