@@ -1,4 +1,4 @@
-function [t,lwp] = get_LWP(swp)
+function [t,lwp] = getLWP(swp)
 
 % t    = transpiration         (mm/s)
 % lwp  = leaf water potential  (MPa)
@@ -7,7 +7,7 @@ function [t,lwp] = get_LWP(swp)
 
 % setting up some parameter values
 tmax = 1e-4;    %mm/s
-kmax = 5e-5;    %mm/(MPA*s)
+kmax = 6e-5;    %mm/(MPA*s)
 p1 = -1.5;      %MPa
 p2 = -3;        %MPa       
 p3 = -2;        %MPa
@@ -45,11 +45,7 @@ if abs(q-t)<5e-9
     go = 0;
 elseif i>29
     %solution not found in time, throw error
-    lwp = nan;
-    disp('ERROR: No LWP solution in 30 steps')
-    disp('Need to debug.')
-    disp('Re-examine parameter values.')
-    go = 0;
+    error('GETLWP:noSolution','ERROR: No LWP solution in 30 steps \n Need to debug. \n Re-examine parameter values.')
 elseif q>t
     %we've gone past the solution, reduce step size
     lwp = lwp+step;
