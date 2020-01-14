@@ -89,6 +89,41 @@ Because transpiration decreases with decreasing $\Psi_L$ and sap flux increases,
 \end{enumerate}
 
 
+\subsection{Bucket}
+
+Right now the bucket is the simplest it can be. Remove the transpiration each timestep. The bucket is sized according to the effective rooting depth $Z_r$.
+
+\begin{equation}
+\theta_1 = \theta_0 - \dfrac{q\Delta t}{Z_r}
+\end{equation}
+
+\begin{equation}
+\psi_{soil}\left(\theta\right) = \psi_{soil,sat}\left(\dfrac{\theta}{\theta_{sat}}\right)^{-b}
+\end{equation}
+
+Do not currently have implementations of:
+\begin{itemize}
+\item Rain
+\item Runoff
+\item Drainage
+\end{itemize}
+
+
+\clearpage
+\section{Experiments}
+
+\subsection{Experiment 1}
+No drainage, no rain. Looking at a 30-day drydown. I'm forcing the model with a constant $T_\text{max}$ of 1e-4 mm/s, which is approximately 4.3 mm/d. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=35pc]{../figs/exp1}
+\caption{As expected, deeper rooting leads to a longer decay period.}
+\label{fig:soln}
+\end{figure}
+
+
+
 
 
 \clearpage
