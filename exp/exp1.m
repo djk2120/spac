@@ -2,87 +2,96 @@ clear
 close all
 addpath ../model
 
-xdk = figure('units','inches','Position',[-24,5,8,6]);
-zz = 0;
-for zr  = [1,0.5]
-    zz = zz+1;
-swp = -0.5;
+xdk = figure('units','inches','Position',[-24,5,10,6]);
 
 
-out = zeros(30*24,2);
-i = 0;
 
-for dd = 1:30
-    for hh = 6:0.5:17.5
-        i = i+1;
-        [q,lwp,fk] = getLWP(swp);
-        [swp,swc]  = bucket(swp,q,zr);
-        
-        out(i,1) = swp;
-        out(i,2) = lwp;
-        out(i,3) = q;
-        out(i,4) = fk;
-        out(i,5) = swc;
-        
+% this function gives a diurnal course of tmax
+% with no stress it would produce 4.3mm/d transpiration
+% x is the time of day from 0-24
+pp = pi/(18-5.5);
+tmax_max = 1.5e-4;
+f  = @(x)max(0,tmax_max*sin((x-5.5)*pp));
+
+
+
+zr  = 1;
+swp0 = -0.3;
+out = zeros(12*30,5,5);
+
+j = 0;
+for zr = 0.5:0.5:2.5
+    j = j+1;
+    i   = 0;
+    swp = swp0;
+    for dd = 1:30
+        for hh = 5.5:0.5:18
+            i = i+1;
+            [q,lwp,fk] = getLWP(swp,f(hh),6e-5);
+            [swp,sm] =   bucket(swp,q,zr);
+            out(i,j,1) = q;
+            out(i,j,2) = lwp;
+            out(i,j,3) = 6e-5*fk;
+            out(i,j,4) = swp;
+            out(i,j,5) = sm;
+        end
     end
 end
 
-xv = (1:30*24)/24;
-if 1==2
+%compute daily transpiration
+g = repmat(1:30,[26,1]);
+g = g(:);
+q = out(:,:,1);
 
-subplot(2,2,1)
-plot(xv,out(:,1),'LineWidth',1.5)
-hold on
-xlabel('Day')
+q_daily = 30*60*splitapply(@sum,q,g);
+
+
+ix = 14:26:length(out(:,1));  %midday
+
+
+subplot(2,3,1)
+plot(out(ix,:,4))
 ylabel('Soil potential (MPa)')
-ylim([-2,0])
-
-subplot(2,2,2)
-plot(xv,out(:,2),'LineWidth',1.5)
-hold on
 xlabel('Day')
-ylabel('Leaf potential (MPa)')
 
-subplot(2,2,3)
-plot(xv,out(:,3),'LineWidth',1.5)
-hold on
+subplot(2,3,3)
+plot(out(ix,:,5))
+ylabel('Soil water content (m3/m3)')
 xlabel('Day')
-ylabel('Transpiration rate (mm/s)')
 
-subplot(2,2,4)
-plot(xv,out(:,4),'LineWidth',1.5)
-hold on
+subplot(2,3,2)
+plot(out(ix,:,2))
+ylabel('Midday leaf potential (MPa)')
 xlabel('Day')
-ylabel('k/kmax (-)')
-end
 
-xv = (1:30*24)/24;
-d1 = 24*(out(2:end,1)-out(1:end-1,1));
-d2 = 24*(out(2:end,5)-out(1:end-1,5));
-subplot(2,1,1)
-plot(xv(2:end),d1)
-hold on
+subplot(2,3,6)
+plot(q_daily)
+ylabel('Transpiration (mm/d)')
 xlabel('Day')
-ylabel('\Delta \Psi_s (MPa/day)')
-subplot(2,1,2)
-plot(xv(2:end),d2)
-hold on
+
+
+subplot(2,3,4)
+plot(out(ix,:,3))
+ylabel('Midday k (mm/s/MPa)')
 xlabel('Day')
-ylabel('\Delta soil moisture (m3/m3/day)')
-end
 
-if 1==1
-subplot(2,1,2)
-legend('Z_r = 1m','Z_r = 0.5m','Location','Southeast')
-end
 
-d1 = out(2:end,1)-out(1:end-1,1);
-d2 = out(2:end,5)-out(1:end-1,5);
+subplot(2,3,5)
+plot(-10+out(ix,:,1))
+xlim([0,30])
+ylim([0,1])
+legend('zr = 0.5m','zr = 1','zr = 1.5',...
+    'zr = 2','zr = 2.5','Location','best')
 
 
 
 
 
-xdk.PaperSize = [8,5];
-xdk.PaperPosition = [0,0,8,5];
-%print('../figs/exp1','-dpdf')
+xdk.PaperSize = [10,6];
+xdk.PaperPosition = [0,0,10,6];
+
+print('../figs/exp1','-dpdf')
+
+
+
+
