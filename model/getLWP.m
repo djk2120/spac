@@ -1,4 +1,4 @@
-function [t,lwp,fk,out] = getLWP(swp)
+function [t,lwp,fk,out] = getLWP(swp,tmax,kmax)
 
 % t    = transpiration         (mm/s)
 % lwp  = leaf water potential  (MPa)
@@ -6,13 +6,12 @@ function [t,lwp,fk,out] = getLWP(swp)
 
 
 % setting up some parameter values
-tmax = 1e-4;    %mm/s
-kmax = 6e-5;    %mm/(MPA*s)
 p1 = -1.5;      %MPa
 p2 = -3;        %MPa       
 p3 = -2;        %MPa
 p4 = -4;        %MPa
-
+%tmax = 1e-4;    %mm/s
+%kmax = 6e-5;    %mm/(MPA*s)
 
 
 
