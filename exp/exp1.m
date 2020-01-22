@@ -10,7 +10,7 @@ xdk = figure('units','inches','Position',[-24,5,10,6]);
 % with no stress it would produce 4.3mm/d transpiration
 % x is the time of day from 0-24
 pp = pi/(18-5.5);
-tmax_max = 1.5e-4;
+
 f  = @(x)max(0,tmax_max*sin((x-5.5)*pp));
 
 
@@ -18,20 +18,23 @@ f  = @(x)max(0,tmax_max*sin((x-5.5)*pp));
 zr  = 1;
 swp0 = -0.3;
 out = zeros(12*30,5,5);
-
+hh = 5.5:0.5:18; % don't need to run the model at night
+tmax_max = 1.5e-4; % midday unstressed tmax, results in about 4.3mm/d total T
+tmax_oneday = tforc(tmax_max,hh);
+kmax = 6e-5;
 j = 0;
-for zr = 0.5:0.5:2.5
+for zr = 0.5:0.25:2.5
     j = j+1;
     i   = 0;
     swp = swp0;
     for dd = 1:30
-        for hh = 5.5:0.5:18
+        for tmax = tmax_oneday
             i = i+1;
-            [q,lwp,fk] = getLWP(swp,f(hh),6e-5);
+            [q,lwp,fk] = getLWP(swp,tmax,kmax);
             [swp,sm] =   bucket(swp,q,zr);
             out(i,j,1) = q;
             out(i,j,2) = lwp;
-            out(i,j,3) = 6e-5*fk;
+            out(i,j,3) = kmax*fk;
             out(i,j,4) = swp;
             out(i,j,5) = sm;
         end
@@ -48,6 +51,15 @@ q_daily = 30*60*splitapply(@sum,q,g);
 
 ix = 14:26:length(out(:,1));  %midday
 
+
+colors = jet;
+colors = colors(1:7:64,:);
+
+for i = 1:6
+    subplot(2,3,i)
+    set(gca,'ColorOrder',colors);
+    hold on
+end
 
 subplot(2,3,1)
 plot(out(ix,:,4))
@@ -80,9 +92,16 @@ subplot(2,3,5)
 plot(-10+out(ix,:,1))
 xlim([0,30])
 ylim([0,1])
-legend('zr = 0.5m','zr = 1','zr = 1.5',...
-    'zr = 2','zr = 2.5','Location','best')
 
+ll = cell(10,1);
+for i = 1:10
+    ll(i) = {['zr = ',num2str(0.25+i*0.25),'m']};
+end
+
+[~,hObj] = legend(ll,'Location','best');
+hL=findobj(hObj,'type','line');  % get the lines, not text
+set(hL,'linewidth',3)            % set their width property
+set(gca,'visible','off')
 
 
 

@@ -39,10 +39,10 @@ out(i,2) = q;
 out(i,3) = t;
 
 
-if abs(q-t)<5e-9&&t>0
+if abs(q-t)<1e-9&&t>0
     %satisfactory solution
     go = 0;
-elseif i>29
+elseif i>39
     go = 0;
     %error('GETLWP:noSolution','ERROR: No LWP solution in 30 steps \n Need to debug. \n Re-examine parameter values.')
 elseif q>t||t==0
