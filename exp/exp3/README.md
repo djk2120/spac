@@ -9,6 +9,6 @@
 ## Nuts/bolts
 
 - experiment is in exp3.m
-- uses the spac model in ../model
+- uses the spac model in ../../model
 - data is output in exp3.mat
 - example script for making a figure in exp3_plots.m
