@@ -1,8 +1,8 @@
 clear
 close all
-addpath ../model
+addpath ../../model
 
-xdk = figure('units','inches','Position',[-24,5,10,6]);
+
 
 
 
@@ -16,21 +16,21 @@ zr.value      = nan(100,1);
 zr.units      = 'm';
 zr.dimensions = {'ensemble member'};
 
-lwp_predawn.value      = nan(100,30);
+lwp_predawn.value      = nan(30,100);
 lwp_predawn.units      = 'MPa';
-lwp_predawn.dimensions = {'ensemble member','day'};
+lwp_predawn.dimensions = {'day','ensemble member'};
 
-lwp_midday.value      = nan(100,30);
+lwp_midday.value      = nan(30,100);
 lwp_midday.units      = 'MPa';
-lwp_midday.dimensions = {'ensemble member','day'};
+lwp_midday.dimensions = {'day','ensemble member'};
 
-k_midday.value      = nan(100,30);
+k_midday.value      = nan(30,100);
 k_midday.units      = 'mm/s';
-k_midday.dimensions = {'ensemble member','day'};
+k_midday.dimensions = {'day','ensemble member'};
 
-transpiration.value      = nan(100,30);
+transpiration.value      = nan(30,100);
 transpiration.units      = 'mm/d';
-transpiration.dimensions = {'ensemble member','day'};
+transpiration.dimensions = {'day','ensemble member'};
 
 
 swp0 = -0.3;
@@ -48,7 +48,7 @@ for km = kvals
 for z   = zvals
     j = j+1;
     kmax.value(j) = km;
-    zr.value(j) = km;
+    zr.value(j) = z;
     swp = swp0;
     for dd = 1:30
         i   = 0;
@@ -59,14 +59,14 @@ for z   = zvals
             qts(i) = q;
             if i==1
                 %predawn
-                lwp_predawn.value(j,dd) = lwp;
+                lwp_predawn.value(dd,j) = lwp;
             elseif i==13
                 %midday
-                lwp_midday.value(j,dd)  = lwp;
-                k_midday.value(j,dd)    = fk*km;
+                lwp_midday.value(dd,j)  = lwp;
+                k_midday.value(dd,j)    = fk*km;
             end
         end
-        transpiration.value(j,dd) = 1800*sum(qts);
+        transpiration.value(dd,j) = 1800*sum(qts);
     end
 end
 end
